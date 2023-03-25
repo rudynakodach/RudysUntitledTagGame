@@ -1,0 +1,17 @@
+name: RudysHotPotato
+version: '${project.version}'
+main: io.github.rudynakodach.rudyshotpotato.RudysHotPotato
+api-version: 1.19
+
+commands:
+  startgame:
+    permission: rhp.start
+    usage: /startgame <delay> <map_radius>
+
+  stopgame:
+    permission: rhp.stop
+    usage: /stopgame
+
+  eliminate:
+    permission: rhp.eliminate
+    usage: /eliminate <player>
