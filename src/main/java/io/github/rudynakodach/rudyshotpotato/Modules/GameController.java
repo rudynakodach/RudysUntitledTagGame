@@ -46,7 +46,6 @@ public class GameController {
     private final int oldWarningDistance;
     public GameController(JavaPlugin plugin, Player initiator, int delay, int borderSize) {
         this.delay = delay;
-        isGameOn = true;
         startingPosition = initiator.getLocation();
         this.world = initiator.getWorld();
 
@@ -80,11 +79,15 @@ public class GameController {
         world.getWorldBorder().setSize(borderSize * 2);
         world.getWorldBorder().setWarningDistance(10);
 
+    }
+
+    public void startGame() {
         teleportAll();
         //roundCountdown(false);
         sendStartMessage();
         assignRandomIT(RandomAssignReason.GAME_BEGIN);
         addGlowing();
+        isGameOn = true;
         Main();
     }
 

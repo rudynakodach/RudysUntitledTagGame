@@ -4,14 +4,11 @@ import io.github.rudynakodach.rudyshotpotato.Modules.GameController;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.WorldBorder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.rudynakodach.rudyshotpotato.RudysHotPotato.*;
@@ -64,7 +61,9 @@ public class GameStartHandler implements CommandExecutor {
             sender.sendMessage(Component.text("Gra rozpoczęta!").color(NamedTextColor.GREEN));
             int finalDelay = delay;
             int finalBorderRadius = borderRadius;
-            gameController = new GameController(plugin, player, finalDelay, finalBorderRadius);
+            GameController controller = new GameController(plugin, player, finalDelay, finalBorderRadius);
+            controller.startGame();
+            gameController = controller;
         }
 
         return true;
