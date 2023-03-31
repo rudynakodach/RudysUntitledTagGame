@@ -1,0 +1,2 @@
+# Whether the death effects should destroy the terrain.
+is-destructive: true

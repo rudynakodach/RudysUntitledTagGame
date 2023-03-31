@@ -1,12 +1,15 @@
-name: RudysHotPotato
+name: RudysUntitledTagGame
 version: '${project.version}'
-main: io.github.rudynakodach.rudyshotpotato.RudysHotPotato
+main: io.github.rudynakodach.rudysuntitledtaggame.RudysUntitledTagGame
 api-version: 1.19
 
 commands:
   startgame:
     permission: rhp.start
-    usage: /startgame <delay> <map_radius>
+    usage: /startgame <delay> <map_radius> <display_time> <colored_glow>
+    aliases:
+      - sg
+      - start
 
   stopgame:
     permission: rhp.stop
@@ -15,3 +18,12 @@ commands:
   eliminate:
     permission: rhp.eliminate
     usage: /eliminate <player>
+    aliases:
+      - elim
+
+  revive:
+    permission: rph.revive
+    usage: /revive <player>
+    aliases:
+      - res
+      - rev

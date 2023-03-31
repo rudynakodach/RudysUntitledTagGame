@@ -1,8 +1,8 @@
-package io.github.rudynakodach.rudyshotpotato.Modules;
+package io.github.rudynakodach.rudysuntitledtaggame.Modules.GameManagement;
 
 public enum RandomAssignReason {
 
-    PREVIOUS_RUNNER_DIED(0),
+    PREVIOUS_IT_DIED(0),
     NEXT_ROUND(1),
     GAME_BEGIN(2);
 

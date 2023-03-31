@@ -1,12 +1,12 @@
-package io.github.rudynakodach.rudyshotpotato.Modules;
+package io.github.rudynakodach.rudysuntitledtaggame.Modules.GameManagement;
 
-public enum StopReason {
+public enum GameStopReason {
     GAME_END(0),
     STOPPED(1);
 
     private final int value;
 
-    StopReason(int value) {
+    GameStopReason(int value) {
         this.value = value;
     }
 
