@@ -4,6 +4,7 @@ import io.github.rudynakodach.rudysuntitledtaggame.Modules.DeathEffects.*;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.Events.Generic.GameEventHandler;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.Events.RoundStart.RoundStartListeners;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.PowerUps.DoubleJump;
+import io.github.rudynakodach.rudysuntitledtaggame.Modules.PowerUps.ItInclusive.JumpBoost;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.PowerUps.ItInclusive.PlayerPuller;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.PowerUps.RunnerInclusive.Stun;
 import net.kyori.adventure.text.Component;
@@ -479,12 +480,22 @@ public class GameController {
     public void setIT(Player player) {
         if(playerToKill != null) {
             playerToKill.getInventory().setItem(0, new ItemStack(Material.AIR, 1));
+            playerToKill.getInventory().setItem(1, new ItemStack(Material.AIR, 1));
         }
 
         ItemStack puller = new PlayerPuller(plugin).getItem();
+        ItemStack jumpBoost = new JumpBoost(plugin).getItem();
+
         GameEventHandler.sendItChangeEvent(this, player);
         playerToKill = player;
-        player.getInventory().setItem(0, puller);
+
+        ItemStack itemInSlot0 = Objects.requireNonNullElse(player.getInventory().getItem(0), new ItemStack(Material.AIR, 1));
+        ItemStack itemInSlot1 = Objects.requireNonNullElse(player.getInventory().getItem(1), new ItemStack(Material.AIR, 1));
+
+        playerToKill.getInventory().setItem(0, puller);
+        playerToKill.getInventory().setItem(1, jumpBoost);
+
+        playerToKill.getInventory().addItem(itemInSlot0, itemInSlot1);
     }
 
     public int currentTime = 0;

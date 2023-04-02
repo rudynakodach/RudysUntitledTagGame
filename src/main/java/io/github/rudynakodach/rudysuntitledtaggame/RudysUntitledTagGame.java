@@ -6,6 +6,7 @@ import io.github.rudynakodach.rudysuntitledtaggame.Commands.GameStopHandler;
 import io.github.rudynakodach.rudysuntitledtaggame.Commands.ReviveHandler;
 import io.github.rudynakodach.rudysuntitledtaggame.Events.*;
 import io.github.rudynakodach.rudysuntitledtaggame.Events.PowerUps.DoubleJumpInteractionEvent;
+import io.github.rudynakodach.rudysuntitledtaggame.Events.PowerUps.JumpBoostInteractionEvent;
 import io.github.rudynakodach.rudysuntitledtaggame.Events.PowerUps.PlayerPullerInteractionEvent;
 import io.github.rudynakodach.rudysuntitledtaggame.Events.PowerUps.StunInteractionHandler;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,6 +49,10 @@ public final class RudysUntitledTagGame extends JavaPlugin {
 
         DoubleJumpInteractionEvent doubleJumpInteractionEvent = new DoubleJumpInteractionEvent(this);
         getServer().getPluginManager().registerEvents(doubleJumpInteractionEvent, this);
+
+        JumpBoostInteractionEvent jumpBoostInteractionEvent = new JumpBoostInteractionEvent(this);
+        getServer().getPluginManager().registerEvents(jumpBoostInteractionEvent, this);
+
 
         GameStartHandler startHandler = new GameStartHandler(this);
         Objects.requireNonNull(getCommand("startgame")).setExecutor(startHandler);

@@ -27,7 +27,7 @@ public class DoubleJump implements PowerUp {
         ItemMeta doubleJumpMeta = doubleJumpStack.getItemMeta();
 
         doubleJumpMeta.setCustomModelData(2137);
-        doubleJumpMeta.displayName(Component.text("Króliczy ").append(Component.text("Skok").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
+        doubleJumpMeta.displayName(Component.text("Króliczy ").append(Component.text("Skok").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)).append(this::getButton));
 
         PersistentDataContainer dataContainer = doubleJumpMeta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(plugin, "doublejump");

@@ -31,7 +31,7 @@ public class PlayerPuller implements PowerUp {
         ItemMeta playerPullerMeta = playerPullerStack.getItemMeta();
 
         playerPullerMeta.setCustomModelData(2137);
-        playerPullerMeta.displayName(Component.text("Przyciongacz").color(NamedTextColor.RED).decorate(TextDecoration.BOLD, TextDecoration.ITALIC));
+        playerPullerMeta.displayName(Component.text("Przyciongacz").color(NamedTextColor.RED).decorate(TextDecoration.BOLD, TextDecoration.ITALIC).append(this::getButton));
 
         PersistentDataContainer dataContainer = playerPullerMeta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(plugin, "przyciongacz");

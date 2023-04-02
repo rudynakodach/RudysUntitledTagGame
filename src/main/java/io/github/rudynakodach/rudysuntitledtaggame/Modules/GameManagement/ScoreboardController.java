@@ -83,8 +83,8 @@ public class ScoreboardController implements GameEventListener {
         Score timeLeftLabel = objective.getScore(ChatColor.BLUE + "Pozostały czas");
         timeLeftLabel.setScore(7);
 
-        timeLeftLabel = objective.getScore("-");
-        timeLeftLabel.setScore(6);
+        timeLeft = objective.getScore("-");
+        timeLeft.setScore(6);
 
     }
 
@@ -113,9 +113,7 @@ public class ScoreboardController implements GameEventListener {
     }
 
     @Override
-    public void onRoundStart(GameController controller) {
-
-    }
+    public void onRoundStart(GameController controller) {}
 
     @Override
     public void onPlayerRevived(GameController controller, Player player) {
@@ -139,7 +137,7 @@ public class ScoreboardController implements GameEventListener {
     @Override
     public void onGameTick(GameTickEvent event) {
         long roundDelay = event.getRoundDelay();
-        long currentTime = event.getRoundDelay();
+        long currentTime = event.getCurrentTime();
 
         long time = roundDelay - currentTime;
         String remainingTime = new SimpleDateFormat("mm:ss.SSS").format(new Date(time));
