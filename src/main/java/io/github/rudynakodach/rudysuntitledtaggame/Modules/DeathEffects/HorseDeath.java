@@ -39,6 +39,7 @@ public class HorseDeath implements DeathEffect {
             @Override
             public void run() {
                 if(i >= 10) {
+                    horse.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_DEATH, 2, .5F);
                     horse.remove();
                     Location loc = target.getLocation();
                     controller.eliminatePlayer(target);
@@ -50,7 +51,7 @@ public class HorseDeath implements DeathEffect {
                 }
 
                 float randomFloat = 0.5f + random.nextFloat() * (1.5F);
-                horse.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_DEATH, 2, randomFloat);
+                horse.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_HURT, 2, randomFloat);
                 i += 1;
             }
         }.runTaskTimer(plugin, 3, 3);

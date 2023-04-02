@@ -150,7 +150,7 @@ public class GameController {
             IT = scoreboard.getTeam("it");
         }
         assert IT != null;
-        IT.prefix(Component.text("[KOŃ] ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+        IT.prefix(Component.text("[KOŃ] ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD).append(Component.text().color(NamedTextColor.WHITE)));
 
         if(scoreboard.getTeam("runners") == null) {
             runners = scoreboard.registerNewTeam("runners");
@@ -480,9 +480,10 @@ public class GameController {
         if(playerToKill != null) {
             playerToKill.getInventory().setItem(0, new ItemStack(Material.AIR, 1));
         }
+
         ItemStack puller = new PlayerPuller(plugin).getItem();
-        playerToKill = player;
         GameEventHandler.sendItChangeEvent(this, player);
+        playerToKill = player;
         player.getInventory().setItem(0, puller);
     }
 
