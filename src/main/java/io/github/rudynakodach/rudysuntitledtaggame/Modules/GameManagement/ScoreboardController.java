@@ -31,7 +31,7 @@ public class ScoreboardController implements GameEventListener {
     public ScoreboardController(GameController controller) {
         this.controller = controller;
         GameEventHandler.registerListener(this);
-        this.scoreboard = createNewScoreboard();
+        this.scoreboard = getScoreboard();
         Objective e = scoreboard.getObjective("game");
         if(e != null) {
             this.objective = e;
@@ -45,8 +45,8 @@ public class ScoreboardController implements GameEventListener {
         this.totalPlayers = controller.totalPlayers;
     }
 
-    private Scoreboard createNewScoreboard() {
-        return Bukkit.getServer().getScoreboardManager().getNewScoreboard();
+    private Scoreboard getScoreboard() {
+        return Bukkit.getServer().getScoreboardManager().getMainScoreboard();
     }
 
     public void displayToPlayers() {
