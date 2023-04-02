@@ -55,7 +55,5 @@ public class HorseDeath implements DeathEffect {
                 i += 1;
             }
         }.runTaskTimer(plugin, 3, 3);
-
-        controller.isAwaitingExecution = false;
     }
 }
