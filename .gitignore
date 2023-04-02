@@ -1,5 +1,3 @@
-# Project exclude paths
-/target/
-./.idea
-./.gitignore
-/.idea
+.idea
+!.idea/workspace.xml
+target

@@ -1,5 +1,6 @@
 package io.github.rudynakodach.rudysuntitledtaggame.Modules.GameManagement;
 
+import io.github.rudynakodach.rudysuntitledtaggame.Modules.Events.GameTickEvent;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.Events.Generic.GameEventHandler;
 import io.github.rudynakodach.rudysuntitledtaggame.Modules.Events.Generic.GameEventListener;
 import net.kyori.adventure.text.Component;
@@ -14,17 +15,28 @@ import java.util.List;
 
 public class ScoreboardController implements GameEventListener {
 
-    private final List<Player> players;
+    private final List<Player> playersAlive;
+    private final List<Player> totalPlayers;
     private final Scoreboard scoreboard;
-    private Objective objective;
-    private Score it;
-    private Score playerCount;
+    private final Objective objective;
     private final GameController controller;
+    Score it;
+    Score playerCount;
     public ScoreboardController(GameController controller) {
         this.controller = controller;
         GameEventHandler.registerListener(this);
         this.scoreboard = createNewScoreboard();
-        this.players = controller.playersAlive;
+        Objective e = scoreboard.getObjective("game");
+        if(e != null) {
+            this.objective = e;
+            e.displayName(Component.text("Gra w ").append(Component.text("KONIA").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+        } else {
+            this.objective = scoreboard.registerNewObjective("game", Criteria.DUMMY, Component.text("Gra w ").append(Component.text("KONIA").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+        }
+
+        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.playersAlive = controller.playersAlive;
+        this.totalPlayers = controller.totalPlayers;
     }
 
     private Scoreboard createNewScoreboard() {
@@ -32,13 +44,12 @@ public class ScoreboardController implements GameEventListener {
     }
 
     public void displayToPlayers() {
-        for (Player p : players) {
+        for (Player p : playersAlive) {
             p.setScoreboard(scoreboard);
         }
     }
 
     public void prepareScoreboard() {
-        objective = scoreboard.registerNewObjective("game", Criteria.DUMMY, Component.text("Gra w ").append(Component.text("KONIA").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score filler = objective.getScore("");
@@ -66,8 +77,11 @@ public class ScoreboardController implements GameEventListener {
         if(it != null) {
             it.resetScore();
         }
-        it = objective.getScore(player.getName());
-        it.setScore(12);
+
+        Score s = objective.getScore(player.getName());
+        s.setScore(12);
+
+        it = s;
     }
 
     @Override
@@ -75,8 +89,11 @@ public class ScoreboardController implements GameEventListener {
         if(playerCount != null) {
             playerCount.resetScore();
         }
-        playerCount = objective.getScore(String.valueOf(controller.playersAlive.size()));
-        playerCount.setScore(9);
+
+        Score s = objective.getScore(String.valueOf(controller.playersAlive.size()));
+        s.setScore(9);
+
+        playerCount = s;
     }
 
     @Override
@@ -89,7 +106,22 @@ public class ScoreboardController implements GameEventListener {
         if(playerCount != null) {
             playerCount.resetScore();
         }
-        playerCount = objective.getScore(String.valueOf(controller.playersAlive.size()));
-        playerCount.setScore(9);
+
+        Score s = objective.getScore(String.valueOf(controller.playersAlive.size()));
+        s.setScore(9);
+
+        playerCount = s;
+    }
+
+    @Override
+    public void onGameEnded(GameController controller) {
+        for (Player p : totalPlayers) {
+            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        }
+    }
+
+    @Override
+    public void onGameTick(GameTickEvent event) {
+
     }
 }

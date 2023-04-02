@@ -35,14 +35,14 @@ public class GameController {
     private final JavaPlugin plugin;
     public List<Player> spectatorList = new ArrayList<>();
     public List<Player> playersAlive;
-    private final List<Player> totalPlayers;
+    public final List<Player> totalPlayers;
     public Player playerToKill;
     private boolean isEnabled = true;
     public BukkitTask mainAction;
     public boolean isWarmup = false;
     private final Location startingPosition;
     private final World world;
-    private final int delay;
+    public final int delay;
     public boolean isAwaitingExecution = false;
     private final boolean isTimeLeftVisible;
     private final boolean isGlowColored;
@@ -149,6 +149,8 @@ public class GameController {
         } else {
             IT = scoreboard.getTeam("it");
         }
+        assert IT != null;
+        IT.prefix(Component.text("[KOŃ] ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
         if(scoreboard.getTeam("runners") == null) {
             runners = scoreboard.registerNewTeam("runners");
@@ -169,7 +171,7 @@ public class GameController {
         }
         if(isGlowColored) {
             IT.color(NamedTextColor.RED);
-            runners.color(NamedTextColor.AQUA);
+            runners.color(NamedTextColor.BLUE);
         } else {
             IT.color(null);
             runners.color(null);
@@ -422,6 +424,7 @@ public class GameController {
      * @see GameStopReason
      */
     public void stopGame(GameStopReason reason) {
+        GameEventHandler.sendGameEndEvent(this);
         if(reason == GameStopReason.GAME_END) {
             plugin.getServer().broadcast(Component.text("Koniec gry.").decorate(TextDecoration.BOLD));
             if(playersAlive.size() > 0) {
@@ -483,7 +486,7 @@ public class GameController {
         player.getInventory().setItem(0, puller);
     }
 
-    int currentTime = 0;
+    public int currentTime = 0;
 
     /**
      * The main method for handling the game.
@@ -530,6 +533,7 @@ public class GameController {
                     }
                     this.cancel();
                 }
+                GameEventHandler.sendGameTickEvent(GameController.this);
                 currentTime += 1;
             }
         }.runTaskTimer(plugin, 20L, 20L);
