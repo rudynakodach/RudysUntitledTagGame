@@ -46,7 +46,7 @@ public class GameEventHandler {
 
     public static void sendGameTickEvent(GameController controller) {
         for (GameEventListener listener : listeners) {
-            listener.onGameTick(new GameTickEvent(controller.currentTime, controller.delay, controller));
+            listener.onGameTick(new GameTickEvent(controller.currentTime, controller.roundDelay, controller));
         }
     }
 }

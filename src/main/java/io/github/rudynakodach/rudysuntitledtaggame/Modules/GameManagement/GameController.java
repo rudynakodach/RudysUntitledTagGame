@@ -43,7 +43,7 @@ public class GameController {
     public boolean isWarmup = false;
     private final Location startingPosition;
     private final World world;
-    public final int delay;
+    public final int roundDelay;
     public boolean isAwaitingExecution = false;
     private final boolean isTimeLeftVisible;
     private final boolean isGlowColored;
@@ -65,7 +65,7 @@ public class GameController {
         this.hitMap = new HashMap<>();
         this.isTimeLeftVisible = isTimeLeftVisible;
         this.isGlowColored = isGlowColored;
-        this.delay = delay;
+        this.roundDelay = delay;
         startingPosition = initiator.getLocation();
         this.world = initiator.getWorld();
 
@@ -514,14 +514,14 @@ public class GameController {
             @Override
             public void run() {
                 if(!isEnabled || !isGameOn) {this.cancel(); return;}
-                else if (delay < currentTime) {this.cancel(); return;}
+                else if (roundDelay < currentTime) {this.cancel(); return;}
 
                 if(isTimeLeftVisible) {
                     for (Player p : totalPlayers) {
                         p.sendActionBar(Component.text("Pozostały czas: ").color(NamedTextColor.GREEN).append(
-                                Component.text(delay - currentTime + " s").color((delay - currentTime <= 3) ? NamedTextColor.RED : YELLOW).decorate(TextDecoration.BOLD)
+                                Component.text(roundDelay - currentTime + " s").color((roundDelay - currentTime <= 3) ? NamedTextColor.RED : YELLOW).decorate(TextDecoration.BOLD)
                         ));
-                        if (delay - currentTime <= 3) {
+                        if (roundDelay - currentTime <= 3) {
                             if (p == playerToKill) {
                                 p.playSound(p, Sound.BLOCK_NOTE_BLOCK_PLING, 2, .5F);
                             } else {
@@ -531,7 +531,7 @@ public class GameController {
                     }
                 }
 
-                if(currentTime >= delay) {
+                if(currentTime >= roundDelay) {
                     currentTime = 0;
                     plugin.getServer().broadcast(Component.text("Życie " + playerToKill.getName() + " dobiegło końca!").color(NamedTextColor.RED));
                     Random rand = new Random();
