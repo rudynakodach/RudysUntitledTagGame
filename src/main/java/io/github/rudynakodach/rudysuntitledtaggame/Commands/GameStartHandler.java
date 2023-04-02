@@ -82,13 +82,8 @@ public class GameStartHandler implements CommandExecutor, TabCompleter {
             return true;
         } else {
             sender.sendMessage(Component.text("Game started!").color(NamedTextColor.GREEN));
-             new GameController(plugin, player, delay, borderRadius, isTimeLeftVisible, isGlowColored);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    GameController.getInstance().startGame();
-                }
-            }.runTaskAsynchronously(plugin);
+            new GameController(plugin, player, delay, borderRadius, isTimeLeftVisible, isGlowColored);
+            GameController.getInstance().startGame();
         }
 
         return true;

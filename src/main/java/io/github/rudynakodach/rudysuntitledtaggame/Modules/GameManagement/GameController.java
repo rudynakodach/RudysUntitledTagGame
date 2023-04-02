@@ -23,6 +23,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -104,16 +105,22 @@ public class GameController {
      * Starts the game.
      */
     public void startGame() {
+        isGameOn = true;
         preparePlayers();
         prepareTeams();
-        isGameOn = true;
-        assignRandomIT(RandomAssignReason.GAME_BEGIN);
-        scoreboardController.prepareScoreboard();
-        scoreboardController.displayToPlayers();
-        teleportAll();
-        addGlowing();
-        startNewRound(false);
-        sendStartMessage();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                assignRandomIT(RandomAssignReason.GAME_BEGIN);
+                scoreboardController.prepareScoreboard();
+                scoreboardController.displayToPlayers();
+                teleportAll();
+                addGlowing();
+                startNewRound(false);
+                sendStartMessage();
+                runEliminationTask();
+            }
+        }.run();
     }
 
     /**
@@ -150,8 +157,6 @@ public class GameController {
         } else {
             IT = scoreboard.getTeam("it");
         }
-        assert IT != null;
-        IT.prefix(Component.text("[KOŃ] ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD).append(Component.text().color(NamedTextColor.WHITE)));
 
         if(scoreboard.getTeam("runners") == null) {
             runners = scoreboard.registerNewTeam("runners");
@@ -177,6 +182,8 @@ public class GameController {
             IT.color(null);
             runners.color(null);
         }
+        IT.prefix(Component.text("[KOŃ] ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD).append(Component.text().color(NamedTextColor.WHITE)));
+        Bukkit.getLogger().log(Level.INFO, "Added IT team prefix.");
     }
 
     /**
@@ -200,25 +207,31 @@ public class GameController {
      * @param isStartingNewRound Are we starting the game or a new round?
      */
     private void startNewRound(boolean isStartingNewRound) {
+        teleportAll();
         RoundStartListeners.sendRoundStartEvent();
         GameEventHandler.sendRoundStartEvent(this);
-        try {
-            //this looks horrible, BUT works
-            isWarmup = true;
-            plugin.getServer().broadcast(Component.text((isStartingNewRound ? "Następna runda " : "Gra ") + "rozpocznie się za ").append(Component.text("3...").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)));
-            playTickSound(1);
-            Thread.sleep(1000);
-            playTickSound(1);
-            plugin.getServer().broadcast(Component.text("2...").color(YELLOW).decorate(TextDecoration.BOLD));
-            Thread.sleep(1000);
-            playTickSound(1);
-            plugin.getServer().broadcast(Component.text("1...").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
-            Thread.sleep(1000);
-            playTickSound(1.5F);
-            isWarmup = false;
-        } catch (InterruptedException e) {
-            plugin.getLogger().log(Level.WARNING, "Exception occurred when executing roundCountdown: " + e.getMessage());
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    //this looks horrible, BUT works
+                    isWarmup = true;
+                    plugin.getServer().broadcast(Component.text((isStartingNewRound ? "Następna runda " : "Gra ") + "rozpocznie się za ").append(Component.text("3...").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)));
+                    playTickSound(1);
+                    Thread.sleep(1000);
+                    playTickSound(1);
+                    plugin.getServer().broadcast(Component.text("2...").color(YELLOW).decorate(TextDecoration.BOLD));
+                    Thread.sleep(1000);
+                    playTickSound(1);
+                    plugin.getServer().broadcast(Component.text("1...").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+                    Thread.sleep(1000);
+                    playTickSound(1.5F);
+                    isWarmup = false;
+                } catch (InterruptedException e) {
+                    plugin.getLogger().log(Level.WARNING, "Exception occurred when executing roundCountdown: " + e.getMessage());
+                }
+            }
+        }.run();
     }
 
     /**
@@ -284,14 +297,27 @@ public class GameController {
             playerToKill.sendMessage(Component.text("Zaczynasz jako goniący...").color(NamedTextColor.RED).decorate(TextDecoration.ITALIC));
         } else if(reason == RandomAssignReason.NEXT_ROUND) {
             playerToKill.sendMessage(Component.text("Będziesz nowym goniącym w tej rundzie!").color(NamedTextColor.RED).decorate(TextDecoration.ITALIC));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    startNewRound(true);
+                    runEliminationTask();
+                }
+            }.runTask(plugin);
+
         } else if(reason == RandomAssignReason.PREVIOUS_IT_DIED) {
             plugin.getServer().broadcast(Component.text("Poprzedni goniący umarł! Wybieranie nowej ofiary losu..."));
             playerToKill.sendMessage(Component.text("Zostałeś wybrany jako nowa ofiara losu... Gonisz.").color(NamedTextColor.RED).decorate(TextDecoration.ITALIC));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    startNewRound(true);
+                    runEliminationTask();
+                }
+            }.runTask(plugin);
         }
 
         rearrangeTeams();
-        teleportAll();
-        runEliminationTask();
     }
 
     /**
@@ -467,10 +493,6 @@ public class GameController {
         world.getWorldBorder().setCenter(oldCenter);
         world.getWorldBorder().setWarningDistance(oldWarningDistance);
         world.getWorldBorder().setSize(oldSize);
-
-        //Remove the teams
-        IT.unregister();
-        runners.unregister();
     }
 
     /**
@@ -518,8 +540,10 @@ public class GameController {
 
                 if(isTimeLeftVisible) {
                     for (Player p : totalPlayers) {
+                        long time = roundDelay - currentTime;
+                        String remainingTime = new SimpleDateFormat("mm:ss").format(new Date(time*1000));
                         p.sendActionBar(Component.text("Pozostały czas: ").color(NamedTextColor.GREEN).append(
-                                Component.text(roundDelay - currentTime + " s").color((roundDelay - currentTime <= 3) ? NamedTextColor.RED : YELLOW).decorate(TextDecoration.BOLD)
+                                Component.text(remainingTime).color((roundDelay - currentTime <= 3) ? NamedTextColor.RED : YELLOW).decorate(TextDecoration.BOLD)
                         ));
                         if (roundDelay - currentTime <= 3) {
                             if (p == playerToKill) {

@@ -65,7 +65,7 @@ public class ScoreboardController implements GameEventListener {
         itLabel.setScore(13);
 
         it = objective.getScore(controller.playerToKill.getName());
-        it.setScore(12);
+        it.setScore(IT_SCORE);
 
         Score filler2 = objective.getScore(" ");
         filler2.setScore(11);
@@ -75,7 +75,7 @@ public class ScoreboardController implements GameEventListener {
 
 
         playerCount = objective.getScore(String.valueOf(controller.playersAlive.size()));
-        playerCount.setScore(9);
+        playerCount.setScore(PLAYER_COUNT_SCORE);
 
         Score filler3 = objective.getScore("  ");
         filler3.setScore(8);
@@ -84,7 +84,7 @@ public class ScoreboardController implements GameEventListener {
         timeLeftLabel.setScore(7);
 
         timeLeft = objective.getScore("-");
-        timeLeft.setScore(6);
+        timeLeft.setScore(GAME_TICK_SCORE);
 
     }
 
@@ -140,7 +140,7 @@ public class ScoreboardController implements GameEventListener {
         long currentTime = event.getCurrentTime();
 
         long time = roundDelay - currentTime;
-        String remainingTime = new SimpleDateFormat("mm:ss").format(new Date(time));
+        String remainingTime = new SimpleDateFormat("mm:ss").format(new Date(time*1000));
 
         if(timeLeft != null) {
             timeLeft.resetScore();
